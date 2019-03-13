@@ -12,8 +12,11 @@ if (!empty($_POST)) {
     print_r($translation.'<br/>');
     echo ($translation === false) ? 'false' : 'true';
 }
-\Application\Application::getDB();
-
+$languages = \Application\Application::getLanguages();
+$options = '';
+foreach ($languages as $language) {
+    $options .= '<option value="'.$language['id'].'">'.$language['title'].'</option>';
+}
 
 $content = <<<HTML
     <div>
@@ -30,16 +33,14 @@ $content = <<<HTML
             <div>
                 <select name="language-word" class="required" required>
                     <option value="">Wähle eine Sprache</option>
-                    <option value="de-DE">Deutsch</option>
-                    <option value="en-EN">Englisch</option>
+                    $options
                 </select>
                 <input type="text" name="word" value="" placeholder="Schreibe das Wort"/>
             </div>
             <div>
                 <select name="language-translation" class="required" required>
                     <option value="">Wähle eine Sprache</option>
-                    <option value="de-DE">Deutsch</option>
-                    <option value="en-EN">Englisch</option>
+                    $options
                 </select>
                 <input type="text" name="translation" value="" placeholder="Übersetzung(en)"/>
             </div>
