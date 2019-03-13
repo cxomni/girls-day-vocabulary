@@ -1,4 +1,5 @@
 <?php
+require_once '../src/Application.php';
 if (!empty($_POST)) {
     $languageWord = (isset($_POST['language-word']) and !empty($_POST['language-word'])) ? $_POST['language-word'] : false;
     $word = (isset($_POST['word']) and !empty($_POST['word'])) ? $_POST['word'] : false;
@@ -11,6 +12,7 @@ if (!empty($_POST)) {
     print_r($translation.'<br/>');
     echo ($translation === false) ? 'false' : 'true';
 }
+\Application\Application::getDB();
 
 
 $content = <<<HTML

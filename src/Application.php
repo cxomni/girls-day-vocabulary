@@ -4,10 +4,23 @@ namespace Application;
 class Application
 {
     private static $config = null;
+    private static $initialized = false;
 
-    public function __construct()
+    private function __construct()
     {
-        $this->config =
+    }
+
+    public static function initialize()
+    {
+        if (!self::$initialized) {
+            self::$config = include('../config/config.php');
+            self::$initialized = true;
+        }
+    }
+    public static function getDB()
+    {
+        self::initialize();
+        print_r(self::$config);
     }
 
 }
