@@ -1,2 +1,5 @@
-# girls-day-vocabulary
-A vocabulary trainer for students from students
+# Vokabeltrainer Girl's Day 2019
+Ein Vokabeltrainer von Schülern für Schüler
+
+
+flag icons used from: http://flag-icon-css.lip.is
