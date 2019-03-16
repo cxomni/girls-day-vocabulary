@@ -1,21 +1,43 @@
 <?php
 require_once '../src/Application.php';
-if (!empty($_POST)) {
-    $languageWord = (isset($_POST['language-word']) and !empty($_POST['language-word'])) ? $_POST['language-word'] : false;
-    $word = (isset($_POST['word']) and !empty($_POST['word'])) ? $_POST['word'] : false;
-    $languageTranslation = (isset($_POST['language-translation']) and !empty($_POST['language-translation'])) ? $_POST['language-translation'] : false;
-    $translation = (isset($_POST['translation']) and !empty($_POST['translation'])) ? $_POST['translation'] : false;
+use Application\Application;
 
-    print_r($languageWord.'<br/>');
-    print_r($word.'<br/>');
-    print_r($languageTranslation.'<br/>');
-    print_r($translation.'<br/>');
-    echo ($translation === false) ? 'false' : 'true';
+$languageWord = (isset($_POST['language-word']) and !empty($_POST['language-word'])) ? $_POST['language-word'] : '';
+$word = (isset($_POST['word']) and !empty($_POST['word'])) ? $_POST['word'] : '';
+$languageTranslation = (isset($_POST['language-translation']) and !empty($_POST['language-translation'])) ? $_POST['language-translation'] : '';
+$translation = (isset($_POST['translation']) and !empty($_POST['translation'])) ? $_POST['translation'] : '';
+
+$errorClassWord = $errorClassTranslation = $error = '';
+if (!empty($_POST)) {
+    if (Application::trueOrFalse($word) and Application::trueOrFalse($translation)) {
+        $saved = Application::saveNewTranslation($word, $translation, $languageWord, $languageTranslation);
+        if ($saved !== true) {
+            $error = '<div class="error-msg">Es trat ein Fehler beim Speichern auf. Gibt es die Übersetzung schon?</div>';
+        }
+    } else {
+        // Error handling
+        $error = '<div class="error-msg">Bitte überprüfe die Schreibweise Deiner Eingaben. Es sind nur Wörter ohne Sonderzeichen, Zahlen oder Satzzeichen erlaubt.</div>';
+        if (!Application::trueOrFalse($word)) {
+            $errorClassWord .= ' error';
+        }
+        if (!Application::trueOrFalse($translation)) {
+            $errorClassTranslation .= ' error';
+        }
+    }
 }
-$languages = \Application\Application::getLanguages();
-$options = '';
+$languages = Application::getLanguages();
+$optionsFrom = $optionsTo = '';
 foreach ($languages as $language) {
-    $options .= '<option value="'.$language['id'].'">'.$language['title'].'</option>';
+    if ($language['id'] == $languageWord) {
+        $optionsFrom .= '<option value="'.$language['id'].'" selected="selected">'.$language['title'].'</option>';
+    } else {
+        $optionsFrom .= '<option value="'.$language['id'].'">'.$language['title'].'</option>';
+    }
+    if ($language['id'] == $languageTranslation) {
+        $optionsTo .= '<option value="'.$language['id'].'" selected>'.$language['title'].'</option>';
+    } else {
+        $optionsTo .= '<option value="'.$language['id'].'">'.$language['title'].'</option>';
+    }
 }
 
 $content = <<<HTML
@@ -30,19 +52,20 @@ $content = <<<HTML
             <li>Wenn du Dir nicht sicher bist, wie man die Wörter schreibt, dann kann Dir Google sicher helfen</li>
         </ol>
         <form id="lerntrainer" action="lernen.php" method="post">
+            $error
             <div>
                 <select name="language-word" class="required" required>
                     <option value="">Wähle eine Sprache</option>
-                    $options
+                    $optionsFrom
                 </select>
-                <input type="text" name="word" value="" placeholder="Schreibe das Wort"/>
+                <input class="required$errorClassWord" type="text" name="word" value="$word" placeholder="Schreibe das Wort" required/>
             </div>
             <div>
                 <select name="language-translation" class="required" required>
                     <option value="">Wähle eine Sprache</option>
-                    $options
+                    $optionsTo
                 </select>
-                <input type="text" name="translation" value="" placeholder="Übersetzung(en)"/>
+                <input class="required$errorClassTranslation" type="text" name="translation" value="$translation" placeholder="Übersetzung(en)" required/>
             </div>
             <div>
                   <input type="submit" value="Speichern"/>

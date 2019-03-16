@@ -83,6 +83,17 @@ select {
     min-width: 218px;
     cursor: pointer;
 }
+.error {
+    border-color: red;
+    background: #ffc2b8;
+}
+.error-msg {
+    max-width: 400px;
+    border: 1px solid red;
+    background: #ffc2b8;
+    border-radius: 4px;
+    padding: 10px;
+}
 input[type="submit"] {
     cursor: pointer;
     border: 1px solid #333;
