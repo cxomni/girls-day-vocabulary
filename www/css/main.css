@@ -45,6 +45,12 @@ body {
 #content > nav > .nav-item:hover {
     color: #fff;
     background: #b983c6;
+    border: 1px solid #333 !important;
+}
+#content > nav > .active {
+    color: #fff;
+    background: #b983c6;
+    border: 1px solid #4286f4;
 }
 #content > div {
     display: flex;
@@ -119,4 +125,73 @@ form > div {
     margin: 5px;
 }
 
+.hidden {
+    display: none !important;
+}
+.goto {
+    cursor: pointer;
+}
+.goto:hover > img {
+  transform: scale(1.3);
+}
+
+.catalog {
+    margin-top: 20px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background: white;
+}
+.catalog.empty {
+    padding: 10px;
+}
+.catalog-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.catalog-page > h4 {
+    padding: 10px;
+}
+.catalog-page > .catalog-row {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+}
+.catalog-page > .catalog-row:last-child {
+    border: 0;
+}
+.catalog-page > .catalog-row:nth-child(even) {
+    background: #f5f5f5;
+}
+
+.catalog-page > .catalog-row > .catalog-from-col {
+    display: flex;
+    min-width: 220px;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #ccc;
+    min-height: 25px;
+    position: relative;
+}
+.catalog-page > .catalog-row > .catalog-to-col {
+    display: flex;
+    min-width: 220px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.catalog-page > .catalog-row > .catalog-from-col > img, .catalog-page > .catalog-row > .catalog-to-col > img  {
+    padding: 5px;
+}
+
+.wiedergabe:after {
+    content: url("/img/speaker-24.png");
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    margin-top: -13px;
+    cursor: pointer;
+    transform: scale(.8);
+}
 

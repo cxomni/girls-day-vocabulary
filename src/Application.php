@@ -106,6 +106,72 @@ class Application
         return true;
     }
 
+    /**
+     * Find all Translations in the database and prepare it for the view
+     *
+     * @param $from Language-Id from which you want to get translations
+     * @param $to Language-Id of the translations
+     * @return array
+     */
+    public static function getTranslations($from, $to)
+    {
+        // Set variables
+        $limit = 20;
+        $page = 0;
+        $count = 0;
+        $catalog = [];
+
+        // Preparing statements
+        $sWordFind = self::getDB()->prepare('SELECT f.title as "fWord", group_concat(t.title) as "tWords" FROM words f INNER JOIN translations trans ON trans.from_id = f.id INNER JOIN words t ON t.id = trans.to_id WHERE f.language_id = ? AND t.language_id = ? GROUP BY f.id');
+        $sWordFind->execute([$from, $to]);
+
+        // Walk through the catalog
+        while ($row = $sWordFind->fetch()) {
+            $catalog[$page][] = [
+                'from' => $row['fWord'],
+                'to' => implode(', ', explode(",", $row['tWords']))
+            ];
+            $count++;
+            if ($count >= $limit) {
+                $page++;
+            }
+        }
+        return $catalog;
+    }
+
+    /**
+     * Find translations in the database and prepare it for the trainer
+     *
+     * @param $from Language-Id from which you want to get translations
+     * @param $to Language-Id of the translations
+     * @return array
+     */
+    public static function getTrainer($from, $to)
+    {
+        // Set variables
+        $limit = 20;
+        $page = 0;
+        $count = 0;
+        $catalog = [];
+
+        // Preparing statements
+        $sWordFind = self::getDB()->prepare('SELECT f.title as "fWord", group_concat(t.title) as "tWords" FROM words f INNER JOIN translations trans ON trans.from_id = f.id INNER JOIN words t ON t.id = trans.to_id WHERE f.language_id = ? AND t.language_id = ? GROUP BY f.id');
+        $sWordFind->execute([$from, $to]);
+
+        // Walk through the catalog
+        while ($row = $sWordFind->fetch()) {
+            $catalog[$page][] = [
+                'from' => $row['fWord'],
+                'to' => implode(', ', explode(",", $row['tWords']))
+            ];
+            $count++;
+            if ($count >= $limit) {
+                $page++;
+            }
+        }
+        return $catalog;
+    }
+
 
     public static function trueOrFalse($word, $allowSpace = true): bool
     {

@@ -2,6 +2,8 @@
 require_once '../src/Application.php';
 use Application\Application;
 
+$activePage = 'lernen';
+
 $languageWord = (isset($_POST['language-word']) and !empty($_POST['language-word'])) ? $_POST['language-word'] : '';
 $word = (isset($_POST['word']) and !empty($_POST['word'])) ? $_POST['word'] : '';
 $languageTranslation = (isset($_POST['language-translation']) and !empty($_POST['language-translation'])) ? $_POST['language-translation'] : '';
@@ -42,26 +44,27 @@ foreach ($languages as $language) {
 
 $content = <<<HTML
     <div>
-        <h2>Das ist die Lernseite</h2>
-        <h3>Hier kannst du dem Vokabeltrainer neue Wörter beibringen. Gehe am besten so vor:</h3>
-        <ol>
-            <li>Wähle zuerst die Sprache von dem Wort, das du trainieren möchtest</li>
+        <h2>Neue Vokabeln hinzufügen</h2>
+        <h3>Hier kannst du dem Vokabeltrainer neue Wörter beibringen</h3>
+        <ol>                
+            <h4>Gehe am besten so vor:</h4>
+            <li>Wähle zuerst die Sprache von dem Wort, das du trainieren möchtest.</li>
             <li>Dann schreibst du das Wort in das Eingabefeld.</li>
-            <li>Wenn Du das Wort eingetragen hast wähle die Sprache aus in die du übersetzen willst</li>
-            <li>Trage dann die Übersetzung in das neue Eingabefeld. Wenn es mehr als eine sinnvolle Übersetzung gibt, schreibe alle Wörter durch ein Leerzeichen getrennt</li>
+            <li>Wenn Du das Wort eingetragen hast wähle die Sprache aus in die du übersetzen willst.</li>
+            <li>Trage dann die Übersetzung in das neue Eingabefeld. Wenn es mehr als eine sinnvolle Übersetzung gibt, schreibe alle Wörter durch ein Leerzeichen getrennt.</li>
             <li>Wenn du Dir nicht sicher bist, wie man die Wörter schreibt, dann kann Dir Google sicher helfen</li>
         </ol>
         <form id="lerntrainer" action="lernen.php" method="post">
             $error
             <div>
-                <select name="language-word" class="required" required>
+                <select onchange="Vocabulary.disableLanguage(this);" name="language-word" class="required" required>
                     <option value="">Wähle eine Sprache</option>
                     $optionsFrom
                 </select>
                 <input class="required$errorClassWord" type="text" name="word" value="$word" placeholder="Schreibe das Wort" required/>
             </div>
             <div>
-                <select name="language-translation" class="required" required>
+                <select id="language-translation" name="language-translation" class="required" required disabled>
                     <option value="">Wähle eine Sprache</option>
                     $optionsTo
                 </select>

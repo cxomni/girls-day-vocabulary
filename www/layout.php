@@ -18,9 +18,9 @@
 </div>
 <div id="content">
     <nav>
-        <a class="nav-item" href="#">Katalog</a>
-        <a class="nav-item" href="lernen.php">Lernen</a>
-        <a class="nav-item" href="#">Abfragen</a>
+        <a class="nav-item<?= (isset($activePage) and $activePage == 'katalog') ? ' active' : '' ?>" href="katalog.php">Katalog</a>
+        <a class="nav-item<?= (isset($activePage) and $activePage == 'lernen') ? ' active' : '' ?>" href="lernen.php">Lernen</a>
+        <a class="nav-item<?= (isset($activePage) and $activePage == 'abfragen') ? ' active' : '' ?>" href="abfragen.php">Abfragen</a>
     </nav>
     <?= isset($content) ? $content : '' ?>
 </div>
