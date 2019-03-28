@@ -28,6 +28,9 @@ window.addEventListener("DOMContentLoaded", function() {
         var wiedergaben = document.getElementsByClassName("wiedergabe");
         for (let i = 0; i < wiedergaben.length; i++) {
             wiedergaben[i].addEventListener("click", function() {
+                if (this.classList.contains('solution-hidden')) {
+                    return false;
+                }
                 var lang = this.dataset.lang;
                 var words = this.innerHTML;
                 var worte = new SpeechSynthesisUtterance(words);

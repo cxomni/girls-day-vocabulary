@@ -28,9 +28,6 @@ foreach ($languages as $language) {
 
 if (!empty($_POST)) {
     $translations = Application::getTranslations($languageWord, $languageTranslation);
-//    echo '<pre>';
-//    print_r($translations);
-//    echo '</pre>';
     if (empty($translations)) {
         $catalog .= '<div class="catalog empty">Es wurden keine Übersetzungen für deine Auswahl gefunden</div>';
     } else {
@@ -96,12 +93,12 @@ $content = <<<HTML
             <div>
                 <label for="language-word">Von:</label>
                 <select id="language-word"  onchange="Vocabulary.disableLanguage(this);" name="language-word" class="required" required>
-                    <option value="">Wähle eine Sprache</option>
+                    <option value="">Sprache</option>
                     $optionsFrom
                 </select>
                 <label for="language-translation">Nach:</label>
                 <select id="language-translation" name="language-translation" class="required" required disabled>
-                    <option value="">Wähle eine Sprache</option>
+                    <option value="">Sprache</option>
                     $optionsTo
                 </select>
             </div>

@@ -3,6 +3,8 @@ require_once '../src/Application.php';
 use Application\Application;
 
 $activePage = 'abfragen';
+$hideTrainerForm = '';
+$nextButton = '';
 
 $languageWord = (isset($_POST['language-word']) and !empty($_POST['language-word'])) ? $_POST['language-word'] : '';
 $languageTranslation = (isset($_POST['language-translation']) and !empty($_POST['language-translation'])) ? $_POST['language-translation'] : '';
@@ -10,15 +12,17 @@ $languageTranslation = (isset($_POST['language-translation']) and !empty($_POST[
 $languages = Application::getLanguages();
 $optionsFrom = $optionsTo = $fromIcon = $toIcon = '';
 $catalog = '';
+$style = '';
+$langIcons = [];
 foreach ($languages as $language) {
+    $langIcon = "/img/flags/".$language['icon'];
+    $style .= '.'.str_replace("_", "-", $language['id']).':before{content: url("'.$langIcon.'");}';
     if ($language['id'] == $languageWord) {
-        $fromIcon = "/img/flags/".$language['icon'];
         $optionsFrom .= '<option value="'.$language['id'].'" selected="selected">'.$language['title'].'</option>';
     } else {
         $optionsFrom .= '<option value="'.$language['id'].'">'.$language['title'].'</option>';
     }
     if ($language['id'] == $languageTranslation) {
-        $toIcon = "/img/flags/".$language['icon'];
         $optionsTo .= '<option value="'.$language['id'].'" selected>'.$language['title'].'</option>';
     } else {
         $optionsTo .= '<option value="'.$language['id'].'">'.$language['title'].'</option>';
@@ -27,63 +31,36 @@ foreach ($languages as $language) {
 
 
 if (!empty($_POST)) {
-    $translations = Application::getTranslations($languageWord, $languageTranslation);
+    $translations = Application::getTrainer($languageWord, $languageTranslation);
+    if (isset($translations['end']) and $translations['end'] == false) {
+        $nextButton = '<input type="submit" value="Nächste"/>';
+    }
 //    echo '<pre>';
 //    print_r($translations);
 //    echo '</pre>';
     if (empty($translations)) {
         $catalog .= '<div class="catalog empty">Es wurden keine Übersetzungen für deine Auswahl gefunden</div>';
     } else {
-        $pages = count($translations);
-        $hidden = '';
-        $catalog .= '<div class="catalog">';
+        $hideTrainerForm = ' class="hidden"';
+        $catalog .= '<form action="#"><div class="trainer">';
         foreach ($translations as $page => $translation) {
-            $p = $page+1;
-            if ($p > 1) {
-                $hidden = ' hidden';
-            }
-            $catalog .= '<div id="page-'.$p.'" class="catalog-page'.$hidden.'">';
             $catalog .= '<div class="catalog-row">';
-            $catalog .= '<div class="catalog-from-col">';
-            $catalog .= '<img height="25px" src="'.$fromIcon.'"/>';
+            $catalog .= '<div class="catalog-from-col wiedergabe flagging '.$translation['langFrom'].'" data-lang="'.$translation['langFrom'].'">';
+            $catalog .= $translation['from'];
             $catalog .= '</div>';
-            $catalog .= '<div class="catalog-to-col">';
-            $catalog .= '<img height="25px" src="'.$toIcon.'"/>';
+            $catalog .= '<div class="catalog-to-col solution">';
+            $catalog .= '<input type="text" value="" name="solution['.$translation['id'].']" placeholder="Wie lautet Deine Lösung?"/>';
             $catalog .= '</div>';
+            $catalog .= '<div class="catalog-to-col wiedergabe solution-hidden" data-lang="'.$translation['langTo'].'">';
+            $catalog .= $translation['to'];
             $catalog .= '</div>';
-            foreach ($translation as $t) {
-                $catalog .= '<div class="catalog-row">';
-                $catalog .= '<div class="catalog-from-col wiedergabe" data-lang="'.$languageWord.'">';
-                $catalog .= $t['from'];
-                $catalog .= '</div>';
-                $catalog .= '<div class="catalog-to-col wiedergabe" data-lang="'.$languageTranslation.'">';
-                $catalog .= $t['to'];
-                $catalog .= '</div>';
-                $catalog .= '</div>';
-            }
-            if ($pages > 1) {
-                $catalog .= '<div class="catalog-row">';
-                if ($p > 1) {
-                    $catalog .= '<div class="catalog-from-col goto" onclick="Vocabulary.goTo('.$page.')">';
-                    $catalog .= '<img height="25px" src="/img/icons8-links-26.png"/>';
-                } else {
-                    $catalog .= '<div class="catalog-from-col">';
-                }
-                $catalog .= '</div>';
-                if ($p < $pages) {
-                    $catalog .= '<div class="catalog-to-col goto" onclick="Vocabulary.goTo('.($p+1).')">';
-                    $catalog .= '<img height="25px" src="/img/icons8-rechts-26.png"/>';
-                } else {
-                    $catalog .= '<div class="catalog-to-col">';
-                }
-                $catalog .= '</div>';
-                $catalog .= '</div>';
-            }
-            $catalog .= '<h4>Seite '.$p.' / '.$pages.'</h4>';
             $catalog .= '</div>';
         }
         $catalog .= '</div>';
+        $catalog .= '<div>';
+        $catalog .= '<input type="button" class="check" value="Prüfe Deine Angaben"/>';
         $catalog .= '</div>';
+        $catalog .= '</form>';
     }
 }
 
@@ -93,7 +70,7 @@ $content = <<<HTML
     <div>
         <h2>Vokabeln abfragen</h2>
         <h3>Lass dich vom Vokabel-Trainer abfragen</h3>
-        <form id="lerntrainer" action="abfragen.php.php" method="post">
+        <form id="lerntrainer" action="abfragen.php" method="post"$hideTrainerForm>
             <div>
                 <label for="language-word">Zwischen </label>
                 <select id="language-word"  onchange="Vocabulary.disableLanguage(this);" name="language-word" class="required" required>

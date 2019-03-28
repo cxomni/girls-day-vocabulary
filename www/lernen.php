@@ -58,14 +58,14 @@ $content = <<<HTML
             $error
             <div>
                 <select onchange="Vocabulary.disableLanguage(this);" name="language-word" class="required" required>
-                    <option value="">Wähle eine Sprache</option>
+                    <option value="">Sprache</option>
                     $optionsFrom
                 </select>
                 <input class="required$errorClassWord" type="text" name="word" value="$word" placeholder="Schreibe das Wort" required/>
             </div>
             <div>
                 <select id="language-translation" name="language-translation" class="required" required disabled>
-                    <option value="">Wähle eine Sprache</option>
+                    <option value="">Sprache</option>
                     $optionsTo
                 </select>
                 <input class="required$errorClassTranslation" type="text" name="translation" value="$translation" placeholder="Übersetzung(en)" required/>

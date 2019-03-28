@@ -150,23 +150,54 @@ class Application
     {
         // Set variables
         $limit = 20;
-        $page = 0;
         $count = 0;
         $catalog = [];
 
+        /** @lang MySQL $sql */
+        $sql = <<<SQL
+            select
+                f.id,
+                f.language_id as "langFrom",
+                f.title as "fWord",
+                t.language_id as "langTo",
+                group_concat(t.title) as "tWords"
+            from words f
+            inner join translations trans on trans.from_id = f.id
+            inner join words t on t.id = trans.to_id
+            where f.language_id = ?
+            group by f.id
+            UNION
+            select
+                f.id,
+                f.language_id as "langFrom",
+                f.title as "tWord",
+                t.language_id as "langTo",
+                group_concat(t.title) as "tWords"
+            from words f
+            inner join translations trans on trans.to_id = f.id
+            inner join words t on t.id = trans.from_id
+            where f.language_id = ?
+            group by f.id
+SQL;
+
+
         // Preparing statements
-        $sWordFind = self::getDB()->prepare('SELECT f.title as "fWord", group_concat(t.title) as "tWords" FROM words f INNER JOIN translations trans ON trans.from_id = f.id INNER JOIN words t ON t.id = trans.to_id WHERE f.language_id = ? AND t.language_id = ? GROUP BY f.id');
+        $sWordFind = self::getDB()->prepare($sql);
         $sWordFind->execute([$from, $to]);
 
         // Walk through the catalog
         while ($row = $sWordFind->fetch()) {
-            $catalog[$page][] = [
+            $catalog[] = [
+                'id' => $row['id'],
+                'langFrom' => str_replace("_", "-", $row['langFrom']),
                 'from' => $row['fWord'],
+                'langTo' => str_replace("_", "-", $row['langTo']),
                 'to' => implode(', ', explode(",", $row['tWords']))
             ];
             $count++;
             if ($count >= $limit) {
-                $page++;
+                $catalog['end'] = 0;
+                return $catalog;
             }
         }
         return $catalog;
